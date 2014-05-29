@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import ForeignKey
 
 engine = create_engine("sqlite:///moontent.db", echo = False)
@@ -10,7 +11,7 @@ session = scoped_session(sessionmaker(bind = engine, autocommit=False, autoflush
 Base = declarative_base()
 Base.query = session.query_property()
 
-class Users(Base):
+class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key = True)
@@ -19,15 +20,17 @@ class Users(Base):
     last_name = Column(String)
     created_at = Column(DateTime())
 
-    #TODO: relationship to posts
 
-class Posts(Base):
+class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key = True)
     user_id = Column(Integer, ForeignKey('users.id'))
     created_at = Column(DateTime())
     content = Column(String(300))
+    
+    user = relationship("User", backref=backref('posts', order_by=id))
+
 
 def main():
     Base.metadata.create_all(engine)

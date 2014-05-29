@@ -31,6 +31,8 @@ class Post(Base):
     
     user = relationship("User", backref=backref('posts', order_by=id))
 
+def get_user(userid):
+    return session.query(User).filter_by(id=userid).first()
 
 def main():
     Base.metadata.create_all(engine)

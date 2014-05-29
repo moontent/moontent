@@ -4,6 +4,7 @@ from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import ForeignKey
+from datetime import datetime
 
 engine = create_engine("sqlite:///moontent.db", echo = False)
 session = scoped_session(sessionmaker(bind = engine, autocommit=False, autoflush=False))
@@ -20,7 +21,6 @@ class User(Base):
     last_name = Column(String)
     created_at = Column(DateTime())
 
-
 class Post(Base):
     __tablename__ = "posts"
 
@@ -33,6 +33,12 @@ class Post(Base):
 
 def get_user(userid):
     return session.query(User).filter_by(id=userid).first()
+
+def create_user(username, first_name, last_name):
+    user = User(username=username, first_name=first_name, last_name=last_name, created_at=datetime.now())
+    session.add(user)
+    session.commit()
+    return user
 
 def all_posts_for_user(userid):
     #TODO: order by date and add paging and whatever

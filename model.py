@@ -34,6 +34,10 @@ class Post(Base):
 def get_user(userid):
     return session.query(User).filter_by(id=userid).first()
 
+def all_posts_for_user(userid):
+    #TODO: order by date and add paging and whatever
+    return session.query(Post).filter_by(user_id=userid).all()
+
 def main():
     Base.metadata.create_all(engine)
     # do some stuff

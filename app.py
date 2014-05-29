@@ -34,7 +34,11 @@ def get_posts(userid):
     posts_dicts = [post_to_dict(post) for post in posts]
     return json.dumps(posts_dicts)
 
-
-
+@app.route("/<userid>/posts", methods=["POST"])
+def create_post(userid):
+    content = request.form.get("content")
+    post = model.create_post(userid, content)
+    return str(post.id)
+    
 if __name__ == "__main__":
     app.run(debug = True)

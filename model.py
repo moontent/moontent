@@ -16,6 +16,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key = True)
+    # TODO: enforce uniqueness on username
     username = Column(String)
     first_name = Column(String)
     last_name = Column(String)
@@ -43,6 +44,13 @@ def create_user(username, first_name, last_name):
 def all_posts_for_user(userid):
     #TODO: order by date and add paging and whatever
     return session.query(Post).filter_by(user_id=userid).all()
+
+def create_post(userid, content):
+    #todo: validate that user exists somewhere
+    post = Post(user_id=userid, content=content, created_at=datetime.now())
+    session.add(post)
+    session.commit()
+    return post
 
 def main():
     Base.metadata.create_all(engine)

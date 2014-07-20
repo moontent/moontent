@@ -1,3 +1,4 @@
+
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime
@@ -12,6 +13,10 @@ session = scoped_session(sessionmaker(bind = engine, autocommit=False, autoflush
 Base = declarative_base()
 Base.query = session.query_property()
 
+following_table = Table('following', Base.metadata,
+    Column('follower', Integer, ForeignKey('users.id')),
+    Column('followed', Integer, ForeignKey('users.id'))
+
 class User(Base):
     __tablename__ = "users"
 
@@ -21,6 +26,8 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     created_at = Column(DateTime())
+
+    following = relationship("User", secondary=following_table, backref="followers")
 
 class Post(Base):
     __tablename__ = "posts"

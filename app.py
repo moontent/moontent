@@ -27,10 +27,14 @@ def create_user():
 
 @app.route("/<userid>/posts")
 def get_posts(userid):
+    posts = model.all_posts_for_user(userid)
+    return render_posts(posts)
+
+#TODO: move this to like a view i guess?
+def render_posts(posts):
     def post_to_dict(post):
         return dict(id=post.id, user_id=post.user_id, content=post.content, created_at=post.created_at.isoformat())
 
-    posts = model.all_posts_for_user(userid)
     posts_dicts = [post_to_dict(post) for post in posts]
     return json.dumps(posts_dicts)
 
@@ -39,6 +43,12 @@ def create_post(userid):
     content = request.form.get("content")
     post = model.create_post(userid, content)
     return str(post.id)
+
+@app.route("/<userid>/feed")
+def get_feed(userid):
+    user = model.get_user(userid)
+    posts = model.get_feed(user)
+    return render_posts(posts)
     
 if __name__ == "__main__":
     app.run(debug = True)
